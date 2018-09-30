@@ -1,0 +1,21 @@
+<package>
+  <name>robot_motors</name>
+  <version>0.1.0</version>
+  <description>
+    Robot motors metapackage.
+  </description>
+  <license>BSD</license>
+
+
+  <author email="kwahl@kth.se">Kristian Wahlqvist</author>
+  <maintainer email="kwahl@kth.se">Kristian Wahlqvist</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>ras_phidget</run_depend>
+
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
