@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 
   while(ros::ok())
   {
+      a = 0;
       circle_controller.publishVelocity();
       ros::spinOnce();
       loop_rate.sleep();
@@ -71,4 +72,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
