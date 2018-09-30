@@ -11,7 +11,8 @@ class DeadReckoningNode
 public:
     ros::NodeHandle n;
     ros::Publisher pub_odom;
-    ros::Subscriber subscriber_encoders;
+    ros::Subscriber sub_encoder1;
+    ros::Subscriber sub_encoder2;
 
 
 
@@ -41,7 +42,7 @@ public:
         // 465084
         pub_odom = n.advertise<geometry_msgs::Pose>("/odom", 1);
         sub_encoder1 = n.subscribe<phidgets::motor_encoder>("/left_motor/encoder",10,&DeadReckoningNode::encoder1Callback,this);
-        sub_encoder2 = n.subscribe<phidget::motor_encoder>("/right_motor/encoder",10,&DeadReckoningNode::encoder2Callback,this);
+        sub_encoder2 = n.subscribe<phidgets::motor_encoder>("/right_motor/encoder",10,&DeadReckoningNode::encoder2Callback,this);
 
 
     }
