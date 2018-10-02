@@ -6,13 +6,11 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs phidgets)
 
 
 catkin_package(
-  INCLUDE_DIRS include
-  DEPENDS
-  CATKIN_DEPENDS roscpp std_msgs geometry_msgs phidgets
+ 
 )
 
 include_directories(
-  include
+  #include
   ${catkin_INCLUDE_DIRS}
 )
 
