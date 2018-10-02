@@ -41,11 +41,10 @@ public:
     {
       //ROS_INFO("velocityCallback velocity linear: [%f] [%s] [%f]", msg->linear.x, ", angular: ", msg->angular.z);
 
-      //linear_x = msg->linear.x;
-      //angular_z = msg->angular.z;
+      linear_x = msg->linear.x;
+      angular_z = msg->angular.z;
 
-      linear_x = 0.5*M_PI/10;
-      angular_z = 2*M_PI/10;
+
 
       desired_w1 = (linear_x-0.5*base*angular_z)/wheel_radius;
       desired_w2 = (linear_x+0.5*base*angular_z)/wheel_radius;
@@ -107,4 +106,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
