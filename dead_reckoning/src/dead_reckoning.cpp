@@ -20,7 +20,7 @@ public:
         // constructor
         n = ros::NodeHandle("~"); //????
 
-        ticks_per_rev = 360;
+        ticks_per_rev = 3591.84;
         control_frequency = 10.0; //Hz
         wheel_radius = 0.0352; //meters
         base = 0.23;
@@ -40,7 +40,7 @@ public:
 
         // 465093
         // 465084
-        pub_odom = n.advertise<geometry_msgs::Pose>("/odom", 1);
+        pub_odom = n.advertise<geometry_msgs::Pose>("/odom", 5);
         sub_encoder1 = n.subscribe<phidgets::motor_encoder>("/left_motor/encoder",10,&DeadReckoningNode::encoder1Callback,this);
         sub_encoder2 = n.subscribe<phidgets::motor_encoder>("/right_motor/encoder",10,&DeadReckoningNode::encoder2Callback,this);
 
@@ -122,7 +122,7 @@ private:
     geometry_msgs::Pose odom_msg;
 
     double control_frequency;
-    int ticks_per_rev;
+    float ticks_per_rev;
     int encoder1;
     int encoder2;
     int d_encoder1;
@@ -168,4 +168,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-

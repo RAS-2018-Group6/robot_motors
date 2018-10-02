@@ -17,8 +17,8 @@ public:
         n = ros::NodeHandle("~");
 
         // Complete r=0.5 circle in 10 s
-        linear_velocity = 0.5*M_PI/10; // 2*pi*r/10 = 2*pi*0.5/10 m/s
-        angular_velocity = 2*M_PI/10; // 2*pi meters in 10 s
+        linear_velocity = 0.5; //1*(0.5*M_PI/10); // 2*pi*r/10 = 2*pi*0.5/10 m/s
+        angular_velocity = M_PI/10; //1*(2*M_PI/10); // 2*pi meters in 10 s
         frequency = 10;
 
         twist_msg.linear.x = linear_velocity;
@@ -71,4 +71,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
