@@ -1,10 +1,9 @@
 <launch>
 
 
-  <node pkg="phidgets" type="motor" name="right_motor" args="_serial:=465084 __name:=right_motor _name:=right_motor"/>
+<node pkg="phidgets" type="motor" name="right_motor" args="_serial:=465084 __name:=right_motor _name:=right_motor"/>
 
-
-  <node pkg="phidgets" type="motor" name="left_motor" args="_serial:=465093 __name:=left_motor _name:=left_motor"/>
+<node pkg="phidgets" type="motor" name="left_motor" args="_serial:=465093 __name:=left_motor _name:=left_motor"/>
 
 <node pgk="dead_reckoning" type="dead_reckoning_node" name="dead_reckoning_node" />
 

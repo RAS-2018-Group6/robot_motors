@@ -12,10 +12,12 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>robot_motors_launch</run_depend>
   <run_depend>ras_phidget</run_depend>
   <run_depend>motor_controller</run_depend>
   <run_depend>dead_reckoning</run_depend>
   <run_depend>test_controller</run_depend>
+
 
 
 

@@ -1,4 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(launch_motors)
+project(robot_motors_launch)
+
 
 find_package(catkin REQUIRED COMPONENTS)
+
+
+catkin_package()
+
+include_directories()
+
+
