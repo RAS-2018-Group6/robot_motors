@@ -20,10 +20,11 @@ public:
         // constructor
         n = ros::NodeHandle("~"); //????
 
-        ticks_per_rev = 3591.84;
+
+        ticks_per_rev = 20;
         control_frequency = 10.0; //Hz
-        wheel_radius = 0.0352; //meters
-        base = 0.23;
+        wheel_radius = 0.05; //meters
+        base = 0.20;
 
         x = 0;
         y = 0;
@@ -47,6 +48,9 @@ public:
 
     }
 
+    ~DeadReckoningNode(){
+
+    }
 
 
     void encoder1Callback(const phidgets::motor_encoder::ConstPtr& msg)

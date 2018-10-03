@@ -19,8 +19,9 @@ public:
         // constructor
         n = ros::NodeHandle("~"); //??
 
+
         control_frequency = 10.0; //Hz
-        wheel_radius = 0.0352; //meters
+        wheel_radius = 0.05; //meters
         base = 0.23;
 
         desired_w1 = 0;
@@ -32,6 +33,10 @@ public:
 
         sub_velocity = n.subscribe<geometry_msgs::Twist>("/motor_controller/twist",10,&MotorControllerNode::velocityCallback,this);
 
+
+    }
+
+    ~MotorControllerNode(){
 
     }
 
@@ -50,7 +55,7 @@ public:
       desired_w2 = (linear_x+0.5*base*angular_z)/wheel_radius;
 
       vel_msg1.data = desired_w1;
-      vel_msg2.data = desired_w2;
+      vel_msg2.data = -desired_w2;
 
       pub_motor_1.publish(vel_msg1);
       pub_motor_2.publish(vel_msg2);
@@ -67,6 +72,8 @@ public:
 
 
 private:
+
+
     std_msgs::Float32 vel_msg1;
     std_msgs::Float32 vel_msg2;
 
