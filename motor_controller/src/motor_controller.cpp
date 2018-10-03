@@ -21,8 +21,8 @@ public:
 
 
         control_frequency = 10.0; //Hz
-        wheel_radius = 0.05; //meters
-        base = 0.23;
+        wheel_radius = 0.097/2.0; //meters
+        base = 0.209; //meters
 
         desired_w1 = 0;
         desired_w2 = 0;
