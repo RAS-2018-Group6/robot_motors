@@ -6,7 +6,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs phidgets)
 
 
 catkin_package(
- 
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs phidgets
 )
 
 include_directories(
@@ -16,6 +16,5 @@ include_directories(
 
 
 add_executable(motor_controller_node src/motor_controller.cpp)
-target_link_libraries(motor_controller_node ${catkin_LIBRARIES} ) 
+target_link_libraries(motor_controller_node ${catkin_LIBRARIES} )
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
