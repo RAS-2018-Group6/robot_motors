@@ -20,11 +20,13 @@ public:
         // constructor
         n = ros::NodeHandle("~"); //????
 
+        msg_time = ros::Time::now();
 
-        ticks_per_rev = 20;
+
+        ticks_per_rev = 890.0;
         control_frequency = 10.0; //Hz
-        wheel_radius = 0.05; //meters
-        base = 0.20;
+        wheel_radius = 0.097/2.0; //meters
+        base = 0.209;
 
         x = 0;
         y = 0;
@@ -34,7 +36,7 @@ public:
         delta_y = 0;
         delta_phi = 0;
 
-        dt = 1/control_frequency;
+        dt = 0;
 
         d_encoder1 = 0;
         d_encoder2 = 0;
@@ -72,10 +74,6 @@ public:
 
     }
 
-
-
-
-
     void calculatePosition()
     {
         float float_d_encoder1 = (float)(d_encoder1);
@@ -84,15 +82,18 @@ public:
         float estimated_w1 = (float_d_encoder1*2*M_PI*control_frequency)/ticks_per_rev;
         float estimated_w2 = (float_d_encoder2*2*M_PI*control_frequency)/ticks_per_rev;
 
-        delta_phi = wheel_radius*(-estimated_w1+estimated_w2)/base;
+        dt = (ros::Time::now() - msg_time).toSec();
+
+        delta_x = 0.5*wheel_radius*cos(phi)*(estimated_w1+estimated_w2);
+        delta_y = 0.5*wheel_radius*sin(phi)*(estimated_w1+estimated_w2);
+
+        delta_phi = 0.5*(-estimated_w1+estimated_w2)/base;
         phi = (phi+delta_phi*dt);
-
-
-        delta_x = -0.5*wheel_radius*sin(phi)*(estimated_w1+estimated_w2);
-        delta_y = 0.5*wheel_radius*cos(phi)*(estimated_w1+estimated_w2);
 
         x = x+delta_x*dt;
         y = y+delta_y*dt;
+
+        msg_time = ros::Time::now();
 
 
         // --------------------------------------------------------------
@@ -111,7 +112,6 @@ public:
 
     void positioningLoop()
     {
-
         calculatePosition();
     }
 
@@ -124,6 +124,7 @@ public:
 
 private:
     geometry_msgs::Pose odom_msg;
+    ros::Time msg_time;
 
     double control_frequency;
     float ticks_per_rev;
