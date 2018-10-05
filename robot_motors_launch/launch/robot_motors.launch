@@ -9,9 +9,6 @@
 
 <node pkg="motor_controller" type="motor_controller_node" name="motor_controller_node" />
 
-
-<node pkg="test_controller" type="circle_test_controller" name="circle_test_controller" />
-
 <remap from="odom" to="/robot_model/odom" />
 
 </launch>
