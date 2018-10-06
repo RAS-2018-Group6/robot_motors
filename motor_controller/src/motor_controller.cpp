@@ -25,7 +25,7 @@ public:
 
         vel_time = ros::Time::now();
 
-        control_frequency = 10.0; //Hz
+        control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
         base = 0.209; //meters
         ticks_per_rev = 890.0;
@@ -48,8 +48,11 @@ public:
         count_enc_left = 0.0;
         count_enc_right = 0.0;
 
-        K_p = 80.0;
-        K_i = 10.0;
+        K_p_left = 1.8;
+        K_i_left = 1.3;
+
+        K_p_right = 2.0;
+        K_i_right = 2.0;
 
         int_error_left = 0.0;
         int_error_right = 0.0;
@@ -57,12 +60,12 @@ public:
         set_zero = false;
 
 
-        pub_motor_left = n.advertise<std_msgs::Float32>("/left_motor/cmd_vel", 10);
-        pub_motor_right = n.advertise<std_msgs::Float32>("/right_motor/cmd_vel", 10);
+        pub_motor_left = n.advertise<std_msgs::Float32>("/left_motor/cmd_vel", 1);
+        pub_motor_right = n.advertise<std_msgs::Float32>("/right_motor/cmd_vel", 1);
 
-        sub_velocity = n.subscribe<geometry_msgs::Twist>("/motor_controller/twist",10,&MotorControllerNode::velocityCallback,this);
-        sub_encoder_left = n.subscribe("/left_motor/encoder",10,&MotorControllerNode::encoder_left_callback,this);
-        sub_encoder_right = n.subscribe("/right_motor/encoder",10,&MotorControllerNode::encoder_right_callback,this);
+        sub_velocity = n.subscribe<geometry_msgs::Twist>("/motor_controller/twist",1,&MotorControllerNode::velocityCallback,this);
+        sub_encoder_left = n.subscribe("/left_motor/encoder",1,&MotorControllerNode::encoder_left_callback,this);
+        sub_encoder_right = n.subscribe("/right_motor/encoder",1,&MotorControllerNode::encoder_right_callback,this);
 
 
     }
@@ -128,8 +131,8 @@ public:
       }
         double dt = (ros::Time::now()- vel_time).toSec();
         int_error_left = int_error_left + error*dt;
-        ROS_INFO("Error: %f, IntError: %f", error,int_error_left);
-        double diff_vel = K_p * error + K_i * int_error_left;
+        //ROS_INFO("Error: %f, IntError: %f", error,int_error_left);
+        double diff_vel = K_p_left * error + K_i_left * int_error_left;
     }
 
     float piControlRight(float error, bool set_zero){
@@ -141,7 +144,7 @@ public:
           double dt = (ros::Time::now()- vel_time).toSec();
           int_error_right = int_error_right + error*dt;
           //ROS_INFO("Error: %f, IntError: %f", error,int_error_right);
-          double diff_vel = K_p * error + K_i * int_error_right;
+          double diff_vel = K_p_right * error + K_i_right * int_error_right;
 
 
     }
@@ -151,7 +154,8 @@ public:
       actual_w_left = calculateWheelVelocity(delta_enc_left);
       actual_w_right = calculateWheelVelocity(delta_enc_right);
 
-      //ROS_INFO("actual right: %f",actual_w_right);
+      ROS_INFO("actual right: %f",actual_w_right);
+      ROS_INFO("actual left: %f",actual_w_left);
 
       float error_left = desired_w_left - actual_w_left;
       float error_right = desired_w_right - actual_w_right;
@@ -221,8 +225,10 @@ private:
     float prev_enc_left;
     float prev_enc_right;
 
-    float K_p;
-    float K_i;
+    float K_p_left;
+    float K_i_left;
+    float K_p_right;
+    float K_i_right;
     float int_error_left;
     float int_error_right;
 
@@ -237,7 +243,7 @@ private:
 
 int main(int argc, char **argv)
 {
-  double control_frequency = 10.0;
+  double control_frequency = 25.0;
 
   ros::init(argc, argv, "motor_controller");
   MotorControllerNode motor_controller;

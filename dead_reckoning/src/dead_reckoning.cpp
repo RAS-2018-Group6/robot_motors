@@ -3,6 +3,8 @@
 #include <phidgets/motor_encoder.h>
 #include <geometry_msgs/Pose.h>
 #include <math.h>
+#include <nav_msgs/Odometry.h>
+#include <tf/transform_broadcaster.h>
 
 
 class DeadReckoningNode
@@ -12,6 +14,7 @@ public:
     ros::Publisher pub_odom;
     ros::Subscriber sub_encoder_left;
     ros::Subscriber sub_encoder_right;
+    tf::TransformBroadcaster odom_broadcaster;
 
     DeadReckoningNode(){
         n = ros::NodeHandle("~"); //????
@@ -19,7 +22,7 @@ public:
         msg_time = ros::Time::now();
 
         ticks_per_rev = 890.0;
-        control_frequency = 10.0; //Hz
+        control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
         base = 0.209;
 
@@ -41,12 +44,14 @@ public:
 
         prev_enc_left = 0;
         prev_enc_right = 0;
+        linear_vel = 0.0;
+        angular_vel = 0.0;
 
         // 465093
         // 465084
-        pub_odom = n.advertise<geometry_msgs::Pose>("/odom", 5);
-        sub_encoder_left = n.subscribe<phidgets::motor_encoder>("/left_motor/encoder",10,&DeadReckoningNode::encoder_left_callback,this);
-        sub_encoder_right = n.subscribe<phidgets::motor_encoder>("/right_motor/encoder",10,&DeadReckoningNode::encoder_right_callback,this);
+        pub_odom = n.advertise<nav_msgs::Odometry>("/odom", 5);
+        sub_encoder_left = n.subscribe<phidgets::motor_encoder>("/left_motor/encoder",1,&DeadReckoningNode::encoder_left_callback,this);
+        sub_encoder_right = n.subscribe<phidgets::motor_encoder>("/right_motor/encoder",1,&DeadReckoningNode::encoder_right_callback,this);
     }
 
     ~DeadReckoningNode(){
@@ -89,9 +94,40 @@ public:
 
         msg_time = ros::Time::now();
 
-        odom_msg.position.x = x;
-        odom_msg.position.y = y;
-        odom_msg.orientation.z = phi;
+        linear_vel = (actual_w_left+actual_w_right)/2.0;
+        angular_vel = (actual_w_right - actual_w_left)/(2.0*base);
+
+        //Publish the Odometry over TF
+
+        geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(phi);
+        geometry_msgs::TransformStamped odom_trans;
+        odom_trans.header.stamp = msg_time;
+        odom_trans.header.frame_id = "odom";
+        odom_trans.child_frame_id = "base_link";
+
+        odom_trans.transform.translation.x = x;
+        odom_trans.transform.translation.y = y;
+        odom_trans.transform.translation.z = 0.0;
+        odom_trans.transform.rotation = odom_quat;
+
+        odom_broadcaster.sendTransform(odom_trans);
+
+        //Publish the Odometry as a message over ROS
+
+        odom_msg.header.stamp = msg_time;
+        odom_msg.header.frame_id = "odom";
+        odom_msg.child_frame_id = "base_link";
+
+        // Position
+        odom_msg.pose.pose.position.x = x;
+        odom_msg.pose.pose.position.y = y;
+        odom_msg.pose.pose.position.z = 0.0;
+        odom_msg.pose.pose.orientation = odom_quat;
+
+        //velocity
+
+        odom_msg.twist.twist.linear.x = linear_vel;
+        odom_msg.twist.twist.angular.z = angular_vel;
 
         pub_odom.publish(odom_msg);
         ROS_INFO("Position (x,y,phi) = (%f,%f,%f)", x,y,phi);
@@ -111,7 +147,7 @@ public:
 
 
 private:
-    geometry_msgs::Pose odom_msg;
+    nav_msgs::Odometry odom_msg;
     ros::Time msg_time;
 
     double control_frequency;
@@ -139,6 +175,9 @@ private:
     float y;
     float phi;
     float dt;
+
+    float linear_vel;
+    float angular_vel;
 
 };
 
