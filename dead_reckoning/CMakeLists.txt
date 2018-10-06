@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(dead_reckoning)
 
-find_package(catkin REQUIRED COMPONENTS roscpp geometry_msgs phidgets)
+find_package(catkin REQUIRED COMPONENTS roscpp geometry_msgs phidgets
+nav_msgs tf)
 
 
 
@@ -16,6 +17,5 @@ include_directories(
 
 
 add_executable(dead_reckoning_node src/dead_reckoning.cpp)
-target_link_libraries(dead_reckoning_node ${catkin_LIBRARIES} ) 
+target_link_libraries(dead_reckoning_node ${catkin_LIBRARIES} )
 add_dependencies(dead_reckoning_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
