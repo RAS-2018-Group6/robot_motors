@@ -19,12 +19,15 @@ public:
     DeadReckoningNode(){
         n = ros::NodeHandle("~"); //????
 
-        msg_time = ros::Time::now();
+        first_msg_left = true;
+        first_msg_right = true;
+
+        last_msg_time = ros::Time::now();
 
         ticks_per_rev = 890.0;
         control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
-        base = 0.209/2.0;
+        base = 0.209;
 
         x = 0;
         y = 0;
@@ -61,42 +64,66 @@ public:
 
     void encoder_left_callback(const phidgets::motor_encoder::ConstPtr& msg)
     {
-        //delta_enc_left = (float) msg->count_change;
-        count_enc_left = (float) msg->count;
-        delta_enc_left = count_enc_left-prev_enc_left;
-        prev_enc_left = count_enc_left;
+        if(first_msg_left){
+          first_msg_left = false;
+          count_enc_left = (float) msg->count;
+          last_msg_time_left = msg->header.stamp;
+
+        }else{
+          dt_left = (msg->header.stamp - last_msg_time_left).toSec();
+          count_enc_left = (float) msg->count;
+          delta_enc_left = count_enc_left-prev_enc_left;
+          prev_enc_left = count_enc_left;
+          actual_w_left = (delta_enc_left*2*M_PI)/(dt_left*ticks_per_rev);
+        }
+
+
     }
 
     void encoder_right_callback(const phidgets::motor_encoder::ConstPtr& msg)
     {
-        //delta_enc_right = - (float) msg->count_change;
-        count_enc_right = -(float) msg->count;
-        delta_enc_right = count_enc_right-prev_enc_right;
-        prev_enc_right = count_enc_right;
+        if(first_msg_right){
+          first_msg_right = false;
+          count_enc_right = (float) msg->count;
+          last_msg_time_right = msg->header.stamp;
+        }else{
+          dt_right = (msg->header.stamp-last_msg_time_right).toSec();
+          count_enc_right = -(float) msg->count;
+          delta_enc_right = count_enc_right-prev_enc_right;
+          prev_enc_right = count_enc_right;
+          actual_w_right= (delta_enc_right*2*M_PI)/(dt_right*ticks_per_rev);
+        }
+
+
         //ROS_INFO("delta encoder_right: %f",delta_enc_right);
     }
 
     void calculatePosition()
     {
-        float actual_w_left = (delta_enc_left*2*M_PI*control_frequency)/ticks_per_rev;
-        float actual_w_right= (delta_enc_right*2*M_PI*control_frequency)/ticks_per_rev;
-
-        dt = (ros::Time::now() - msg_time).toSec();
-
-        delta_x = 0.5*wheel_radius*cos(phi)*(actual_w_left+actual_w_right);
-        delta_y = 0.5*wheel_radius*sin(phi)*(actual_w_right+actual_w_right);
-
-        delta_phi = 0.5*(-actual_w_left+actual_w_right)/base;
-        phi = (phi+delta_phi*dt);
-
-        x = x+delta_x*dt;
-        y = y+delta_y*dt;
+        linear_vel = wheel_radius*(actual_w_left+actual_w_right)/2.0;
+        angular_vel = (actual_w_right - actual_w_left)*wheel_radius/(base);
 
         msg_time = ros::Time::now();
 
-        linear_vel = (actual_w_left+actual_w_right)/2.0;
-        angular_vel = (actual_w_right - actual_w_left)/(2.0*base);
+        dt = (msg_time-last_msg_time).toSec();
 
+        delta_phi = angular_vel*dt;
+        phi = phi + delta_phi;
+
+        if(phi >= 2* M_PI){
+            phi = phi - 2* M_PI;
+        }else if(phi < 0){
+          phi = phi + 2 * M_PI;
+        }else{
+          phi = phi;
+        }
+
+        delta_x = linear_vel*cos(phi);
+        delta_y = linear_vel*sin(phi);
+
+        x = x+delta_x*dt;
+        y = y+delta_y*dt;
+        
         //Publish the Odometry over TF
 
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(phi);
@@ -104,7 +131,6 @@ public:
         odom_trans.header.stamp = msg_time;
         odom_trans.header.frame_id = "odom";
         odom_trans.child_frame_id = "base_link";
-
         odom_trans.transform.translation.x = x;
         odom_trans.transform.translation.y = y;
         odom_trans.transform.translation.z = 0.0;
@@ -149,6 +175,11 @@ public:
 private:
     nav_msgs::Odometry odom_msg;
     ros::Time msg_time;
+    ros::Time last_msg_time;
+    ros::Time last_msg_time_left;
+    ros::Time last_msg_time_right;
+    bool first_msg_left;
+    bool first_msg_right;
 
     double control_frequency;
     float ticks_per_rev;
@@ -174,6 +205,8 @@ private:
     float x;
     float y;
     float phi;
+    float dt_left;
+    float dt_right;
     float dt;
 
     float linear_vel;
