@@ -24,7 +24,7 @@ public:
         ticks_per_rev = 890.0;
         control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
-        base = 0.209;
+        base = 0.209/2.0;
 
         x = 0;
         y = 0;
@@ -49,7 +49,7 @@ public:
 
         // 465093
         // 465084
-        pub_odom = n.advertise<nav_msgs::Odometry>("/odom", 5);
+        pub_odom = n.advertise<nav_msgs::Odometry>("/odom", 1);
         sub_encoder_left = n.subscribe<phidgets::motor_encoder>("/left_motor/encoder",1,&DeadReckoningNode::encoder_left_callback,this);
         sub_encoder_right = n.subscribe<phidgets::motor_encoder>("/right_motor/encoder",1,&DeadReckoningNode::encoder_right_callback,this);
     }

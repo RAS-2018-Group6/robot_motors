@@ -48,11 +48,11 @@ public:
         count_enc_left = 0.0;
         count_enc_right = 0.0;
 
-        K_p_left = 1.8;
-        K_i_left = 1.3;
+        K_p_left = 10.0;
+        K_i_left = 3.0;
 
-        K_p_right = 2.0;
-        K_i_right = 2.0;
+        K_p_right = 13.0;
+        K_i_right = 3.0;
 
         int_error_left = 0.0;
         int_error_right = 0.0;
