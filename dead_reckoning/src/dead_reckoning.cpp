@@ -17,7 +17,7 @@ public:
     tf::TransformBroadcaster odom_broadcaster;
 
     DeadReckoningNode(){
-        n = ros::NodeHandle("~"); //????
+        n = ros::NodeHandle("~");
 
         first_msg_left = true;
         first_msg_right = true;
@@ -27,7 +27,7 @@ public:
         ticks_per_rev = 890.0;
         control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
-        base = 0.209;
+        base = 0.18;
 
         x = 0;
         y = 0;

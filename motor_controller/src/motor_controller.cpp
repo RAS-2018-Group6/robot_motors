@@ -27,7 +27,7 @@ public:
 
         control_frequency = 25.0; //Hz
         wheel_radius = 0.097/2.0; //meters
-        base = 0.209; //meters
+        base = 0.18; //meters
         ticks_per_rev = 890.0;
 
         desired_w_left = 0.0;
