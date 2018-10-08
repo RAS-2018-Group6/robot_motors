@@ -86,6 +86,8 @@ public:
       desired_w_left = linear_x - 0.5*base*angular_z;
       desired_w_right = linear_x + 0.5*base*angular_z;
 
+
+
       //ROS_INFO("Desired Left: %f \n Desired Right: %f", desired_w_left,desired_w_right);
 
       //desired_w_left = (linear_x-0.5*base*angular_z)/wheel_radius;
@@ -154,8 +156,11 @@ public:
       actual_w_left = calculateWheelVelocity(delta_enc_left);
       actual_w_right = calculateWheelVelocity(delta_enc_right);
 
-      ROS_INFO("actual right: %f",actual_w_right);
-      ROS_INFO("actual left: %f",actual_w_left);
+      float angular_vel = (actual_w_right - actual_w_left)*wheel_radius/(base);
+      ROS_INFO("Actual Angular Velocity: %f", angular_vel);
+
+      //ROS_INFO("actual right: %f",actual_w_right);
+      //ROS_INFO("actual left: %f",actual_w_left);
 
       float error_left = desired_w_left - actual_w_left;
       float error_right = desired_w_right - actual_w_right;

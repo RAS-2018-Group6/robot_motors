@@ -74,7 +74,7 @@ public:
           count_enc_left = (float) msg->count;
           delta_enc_left = count_enc_left-prev_enc_left;
           prev_enc_left = count_enc_left;
-          actual_w_left = (delta_enc_left*2*M_PI)/(dt_left*ticks_per_rev);
+          actual_w_left = (delta_enc_left*2*M_PI*wheel_radius)/(dt_left*ticks_per_rev);
         }
 
 
@@ -91,7 +91,7 @@ public:
           count_enc_right = -(float) msg->count;
           delta_enc_right = count_enc_right-prev_enc_right;
           prev_enc_right = count_enc_right;
-          actual_w_right= (delta_enc_right*2*M_PI)/(dt_right*ticks_per_rev);
+          actual_w_right= (delta_enc_right*2*M_PI*wheel_radius)/(dt_right*ticks_per_rev);
         }
 
 
@@ -100,8 +100,10 @@ public:
 
     void calculatePosition()
     {
-        linear_vel = wheel_radius*(actual_w_left+actual_w_right)/2.0;
-        angular_vel = (actual_w_right - actual_w_left)*wheel_radius/(base);
+        linear_vel = (actual_w_left+actual_w_right)/2.0;
+        angular_vel = (actual_w_right - actual_w_left)/(base);
+
+        ROS_INFO("Angular Velocity: %f", angular_vel);
 
         msg_time = ros::Time::now();
 
@@ -123,7 +125,7 @@ public:
 
         x = x+delta_x*dt;
         y = y+delta_y*dt;
-        
+
         //Publish the Odometry over TF
 
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(phi);
