@@ -78,7 +78,8 @@ public:
 
     void velocityCallback(const geometry_msgs::Twist::ConstPtr& msg)
     {
-      //ROS_INFO("velocityCallback velocity linear: %f, velocity angular: %f", msg->linear.x,msg->angular.z);
+      ROS_INFO("velocityCallback velocity linear: %f, velocity angular: %f", msg->linear.x,msg->angular.z);
+
 
       linear_x = (float) msg->linear.x;
       angular_z = (float) msg->angular.z;
@@ -125,29 +126,34 @@ public:
         return control_frequency;
     }
 
-    float piControlLeft(float error, bool set_zero){
-      if (set_zero == true){
+    float piControlLeft(float error, bool set_zero_f){
+      if (set_zero_f == true){
+        //ROS_INFO("Set Zero");
         set_zero = false;
         int_error_left = 0.0;
         double diff_vel = 0.0;
+        return diff_vel;
       }
         double dt = (ros::Time::now()- vel_time).toSec();
         int_error_left = int_error_left + error*dt;
         //ROS_INFO("Error: %f, IntError: %f", error,int_error_left);
         double diff_vel = K_p_left * error + K_i_left * int_error_left;
+        return diff_vel;
     }
 
-    float piControlRight(float error, bool set_zero){
-        if (set_zero == true){
+    float piControlRight(float error, bool set_zero_f){
+        if (set_zero_f == true){
+          //ROS_INFO("Set Zero");
           set_zero = false;
           int_error_right = 0.0;
           double diff_vel = 0.0;
+          return diff_vel;
         }
           double dt = (ros::Time::now()- vel_time).toSec();
           int_error_right = int_error_right + error*dt;
           //ROS_INFO("Error: %f, IntError: %f", error,int_error_right);
           double diff_vel = K_p_right * error + K_i_right * int_error_right;
-
+          return diff_vel;
 
     }
 
@@ -155,9 +161,10 @@ public:
 
       actual_w_left = calculateWheelVelocity(delta_enc_left);
       actual_w_right = calculateWheelVelocity(delta_enc_right);
+      //ROS_INFO("Deltaencoder left: %f \n Deltaencoder right: %f",delta_enc_left,delta_enc_right);
 
       float angular_vel = (actual_w_right - actual_w_left)*wheel_radius/(base);
-      ROS_INFO("Actual Angular Velocity: %f", angular_vel);
+      //ROS_INFO("Actual Angular Velocity: %f", angular_vel);
 
       //ROS_INFO("actual right: %f",actual_w_right);
       //ROS_INFO("actual left: %f",actual_w_left);
@@ -165,12 +172,17 @@ public:
       float error_left = desired_w_left - actual_w_left;
       float error_right = desired_w_right - actual_w_right;
 
+      //ROS_INFO("Error left: %f \n Error right: %f",error_left,error_right);
+
       if((desired_w_left == 0.0) && (desired_w_right == 0.0) && (error_left == 0.0) && (error_right == 0.0)){
+        //ROS_INFO("Set Zero");
         set_zero = true;
       }
 
       float diff_vel_left = piControlLeft(error_left,set_zero);
       float diff_vel_right = piControlRight(error_right,set_zero);
+
+      //ROS_INFO("Diff Velocity Left: %f \n Diff Velocity Right: %f",diff_vel_left,diff_vel_right);
 
       vel_time = ros::Time::now();
 
@@ -196,6 +208,7 @@ public:
       vel_msg_left.data = pub_vel_left;
       vel_msg_right.data = -pub_vel_right;
 
+      //ROS_INFO("%f,%f",pub_vel_left,pub_vel_right);
       pub_motor_left.publish(vel_msg_left);
       pub_motor_right.publish(vel_msg_right);
 
