@@ -29,13 +29,13 @@ public:
         wheel_radius = 0.097/2.0; //meters
         base = 0.18;
 
-        //x = 0.20;
-        //y = 0.30;
-        //phi = M_PI/2;
+        x = 0.20;
+        y = 0.30;
+        phi = M_PI/2;
 
- 	x = 0.00;
-        y = 0.00;
-        phi = 0;
+ 	      //x = 0.00;
+        //y = 0.00;
+        //phi = 0;
 
         delta_x = 0;
         delta_y = 0;
