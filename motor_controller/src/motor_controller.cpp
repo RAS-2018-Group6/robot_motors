@@ -78,7 +78,7 @@ public:
 
     void velocityCallback(const geometry_msgs::Twist::ConstPtr& msg)
     {
-      ROS_INFO("velocityCallback velocity linear: %f, velocity angular: %f", msg->linear.x,msg->angular.z);
+      //ROS_INFO("velocityCallback velocity linear: %f, velocity angular: %f", msg->linear.x,msg->angular.z);
 
 
       linear_x = (float) msg->linear.x;
@@ -162,6 +162,8 @@ public:
       actual_w_left = calculateWheelVelocity(delta_enc_left);
       actual_w_right = calculateWheelVelocity(delta_enc_right);
       //ROS_INFO("Deltaencoder left: %f \n Deltaencoder right: %f",delta_enc_left,delta_enc_right);
+      //ROS_INFO("Wheel Left: %f, Wheel Right: %f",actual_w_left,actual_w_right);
+      //ROS_INFO("Delta Encoder Right: %f, Delta Encoder Left: %f", delta_enc_right, delta_enc_left);
 
       float angular_vel = (actual_w_right - actual_w_left)*wheel_radius/(base);
       //ROS_INFO("Actual Angular Velocity: %f", angular_vel);

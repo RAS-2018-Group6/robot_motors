@@ -75,6 +75,7 @@ public:
 
         }else{
           dt_left = (msg->header.stamp - last_msg_time_left).toSec();
+          last_msg_time_left = msg->header.stamp;
           count_enc_left = (float) msg->count;
           delta_enc_left = count_enc_left-prev_enc_left;
           prev_enc_left = count_enc_left;
@@ -92,6 +93,7 @@ public:
           last_msg_time_right = msg->header.stamp;
         }else{
           dt_right = (msg->header.stamp-last_msg_time_right).toSec();
+          last_msg_time_right = msg->header.stamp;
           count_enc_right = -(float) msg->count;
           delta_enc_right = count_enc_right-prev_enc_right;
           prev_enc_right = count_enc_right;
@@ -107,12 +109,17 @@ public:
         linear_vel = (actual_w_left+actual_w_right)/2.0;
         angular_vel = (actual_w_right - actual_w_left)/(base);
 
+        //ROS_INFO("DT right: %f, DT left: %f", dt_right, dt_left);
+        //ROS_INFO("Wheel Left Odom: %f, Wheel Right Odom: %f",actual_w_left,actual_w_right);
+        //ROS_INFO("ODOM Delta Encoder Right: %f, Delta Encoder Left: %f", delta_enc_right, delta_enc_left);
         ROS_INFO("Linear Velocity: %f \nAngular Velocity: %f", linear_vel,angular_vel);
 
         msg_time = ros::Time::now();
 
         dt = (msg_time-last_msg_time).toSec();
 
+
+        last_msg_time = ros::Time::now();
         delta_phi = angular_vel*dt;
         phi = phi + delta_phi;
 
