@@ -107,7 +107,7 @@ public:
         linear_vel = (actual_w_left+actual_w_right)/2.0;
         angular_vel = (actual_w_right - actual_w_left)/(base);
 
-        ROS_INFO("Angular Velocity: %f", angular_vel);
+        ROS_INFO("Linear Velocity: %f \nAngular Velocity: %f", linear_vel,angular_vel);
 
         msg_time = ros::Time::now();
 
@@ -161,8 +161,10 @@ public:
         odom_msg.twist.twist.linear.x = linear_vel;
         odom_msg.twist.twist.angular.z = angular_vel;
 
+
+
         pub_odom.publish(odom_msg);
-        ROS_INFO("Position (x,y,phi) = (%f,%f,%f)", x,y,phi);
+        //ROS_INFO("Position (x,y,phi) = (%f,%f,%f)", x,y,phi);
     }
 
 
