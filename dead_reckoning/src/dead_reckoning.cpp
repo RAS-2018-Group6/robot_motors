@@ -138,8 +138,8 @@ public:
         y = y+delta_y*dt;
 
         //Publish the Odometry over TF
-
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(phi);
+        /*
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = msg_time;
         odom_trans.header.frame_id = "odom";
@@ -150,6 +150,7 @@ public:
         odom_trans.transform.rotation = odom_quat;
 
         odom_broadcaster.sendTransform(odom_trans);
+        */
 
         //Publish the Odometry as a message over ROS
 
