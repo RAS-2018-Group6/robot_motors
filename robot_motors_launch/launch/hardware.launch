@@ -10,4 +10,10 @@
 
 <remap from="odom" to="/robot_model/odom" />
 
+<include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+<include file="$(find phidgets_imu)/launch/imu.launch"/>
+
+<node pkg="arduino_servo_control" type="servo_control" name="servo_control" output="screen"/>
+
 </launch>

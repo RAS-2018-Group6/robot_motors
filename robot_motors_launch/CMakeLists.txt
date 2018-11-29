@@ -8,5 +8,3 @@ find_package(catkin REQUIRED COMPONENTS)
 catkin_package()
 
 include_directories()
-
-
