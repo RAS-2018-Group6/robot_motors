@@ -4,9 +4,9 @@
 
 <node pkg="phidgets" type="motor" name="left_motor" args="_serial:=465093 __name:=left_motor _name:=left_motor"/>
 
-<node pkg="dead_reckoning" type="dead_reckoning_node" name="dead_reckoning_node" output="screen" />
+<node pkg="dead_reckoning" type="dead_reckoning_node" name="dead_reckoning_node"/>
 
-<node pkg="motor_controller" type="motor_controller_node" name="motor_controller_node" output="screen"/>
+<node pkg="motor_controller" type="motor_controller_node" name="motor_controller_node"/>
 
 <remap from="odom" to="/robot_model/odom" />
 
