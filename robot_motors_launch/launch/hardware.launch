@@ -1,0 +1,23 @@
+<launch>
+
+<node pkg="phidgets" type="motor" name="right_motor" args="_serial:=465084 __name:=right_motor _name:=right_motor"/>
+
+<node pkg="phidgets" type="motor" name="left_motor" args="_serial:=465093 __name:=left_motor _name:=left_motor"/>
+
+<node pkg="dead_reckoning" type="dead_reckoning_node" name="dead_reckoning_node" />
+
+<node pkg="motor_controller" type="motor_controller_node" name="motor_controller_node" />
+
+<remap from="odom" to="/robot_model/odom" />
+
+<include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+<!-- > <include file="$(find phidgets_imu)/launch/imu.launch"/> <-->
+
+<node pkg="arduino_servo_control" type="servo_control" name="arduino_servo_control" output="screen"/>
+
+<node pkg="ras_espeak" type="espeak_node" name="espeak_node" output="screen"/>
+
+
+
+</launch>

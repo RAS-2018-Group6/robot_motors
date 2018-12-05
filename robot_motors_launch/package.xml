@@ -14,6 +14,8 @@
   <run_depend>motor_controller</run_depend>
   <run_depend>dead_reckoning</run_depend>
   <run_depend>test_controller</run_depend>
+  <run_depend>phidgets_imu</run_depend>
+
   <export>
 
   </export>

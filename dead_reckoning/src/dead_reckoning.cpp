@@ -29,9 +29,13 @@ public:
         wheel_radius = 0.097/2.0; //meters
         base = 0.18;
 
-        x = 0;
-        y = 0;
-        phi = 0;
+        x = 0.20;
+        y = 0.30;
+        phi = M_PI/2;
+
+ 	      //x = 0.00;
+        //y = 0.00;
+        //phi = 0;
 
         delta_x = 0;
         delta_y = 0;
@@ -71,6 +75,7 @@ public:
 
         }else{
           dt_left = (msg->header.stamp - last_msg_time_left).toSec();
+          last_msg_time_left = msg->header.stamp;
           count_enc_left = (float) msg->count;
           delta_enc_left = count_enc_left-prev_enc_left;
           prev_enc_left = count_enc_left;
@@ -88,6 +93,7 @@ public:
           last_msg_time_right = msg->header.stamp;
         }else{
           dt_right = (msg->header.stamp-last_msg_time_right).toSec();
+          last_msg_time_right = msg->header.stamp;
           count_enc_right = -(float) msg->count;
           delta_enc_right = count_enc_right-prev_enc_right;
           prev_enc_right = count_enc_right;
@@ -103,12 +109,17 @@ public:
         linear_vel = (actual_w_left+actual_w_right)/2.0;
         angular_vel = (actual_w_right - actual_w_left)/(base);
 
-        ROS_INFO("Angular Velocity: %f", angular_vel);
+        //ROS_INFO("DT right: %f, DT left: %f", dt_right, dt_left);
+        //ROS_INFO("Wheel Left Odom: %f, Wheel Right Odom: %f",actual_w_left,actual_w_right);
+        //ROS_INFO("ODOM Delta Encoder Right: %f, Delta Encoder Left: %f", delta_enc_right, delta_enc_left);
+        ROS_INFO("Linear Velocity: %f \nAngular Velocity: %f", linear_vel,angular_vel);
 
         msg_time = ros::Time::now();
 
         dt = (msg_time-last_msg_time).toSec();
 
+
+        last_msg_time = ros::Time::now();
         delta_phi = angular_vel*dt;
         phi = phi + delta_phi;
 
@@ -127,8 +138,8 @@ public:
         y = y+delta_y*dt;
 
         //Publish the Odometry over TF
-
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(phi);
+        /*
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = msg_time;
         odom_trans.header.frame_id = "odom";
@@ -139,6 +150,7 @@ public:
         odom_trans.transform.rotation = odom_quat;
 
         odom_broadcaster.sendTransform(odom_trans);
+        */
 
         //Publish the Odometry as a message over ROS
 
@@ -157,8 +169,10 @@ public:
         odom_msg.twist.twist.linear.x = linear_vel;
         odom_msg.twist.twist.angular.z = angular_vel;
 
+
+
         pub_odom.publish(odom_msg);
-        ROS_INFO("Position (x,y,phi) = (%f,%f,%f)", x,y,phi);
+        //ROS_INFO("Position (x,y,phi) = (%f,%f,%f)", x,y,phi);
     }
 
 
