@@ -12,9 +12,12 @@
 
 <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
 
-<include file="$(find phidgets_imu)/launch/imu.launch"/>
+<!-- > <include file="$(find phidgets_imu)/launch/imu.launch"/> <-->
 
-<node pkg="arduino_servo_control" type="servo_control" name="servo_control" output="screen"/>
+<node pkg="arduino_servo_control" type="servo_control" name="arduino_servo_control" output="screen"/>
+
+<node pkg="ras_espeak" type="espeak_node" name="espeak_node" output="screen"/>
+
+
 
 </launch>
-
